@@ -73,7 +73,7 @@ cross_tab_heatmap(df=df,col1='order_hour_of_day',col2='department',save=True)
 plot_reorder_rate_by_category(df=df)
 
 # mean of add to cart otder by hour heatmap
-plot_mean_add_to_cart_order_by_hour(df=df)
+plot_mean_add_to_cart_order_by_hour(df=df) #asdad
 
 # reorder rate heatmap
 plot_reorder_rate_heatmap(df=df)
