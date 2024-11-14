@@ -13,7 +13,7 @@ def stratified_sample(df:pd.DataFrame, stratify_col:str, frac:float) -> pd.DataF
     stratified_df = stratified_df.reset_index(drop=True)
     return stratified_df
 
-def plot_histogram(df:pd.DataFrame,col:str):
+def plot_histogram(df:pd.DataFrame,col:str,save:bool):
     """
     Histogram plot of a column in the dataset
     """
@@ -21,9 +21,11 @@ def plot_histogram(df:pd.DataFrame,col:str):
     plt.title(f"histogram of {col}")
     plt.xlabel(col)
     plt.ylabel('count')
+    if save:
+        plt.savefig(f'Project_1/plots/EDA/hist_{col}.png')
     plt.show()
 
-def plot_boxplot(df:pd.DataFrame,col:str):
+def plot_boxplot(df:pd.DataFrame,col:str,save:bool):
     """
     Boxplot of a column in the dataset
     """
@@ -31,30 +33,34 @@ def plot_boxplot(df:pd.DataFrame,col:str):
     plt.title(f"boxplot of {col}")
     plt.xlabel(col)
     plt.ylabel('frequency')
+    if save:
+        plt.savefig(f'Project_1/plots/EDA/box_{col}.png')
     plt.show()
 
 def skew_kurtosis(df:pd.DataFrame,col:str) -> list:
     """
     Finding Skewness and kurtosis of the dataset
     """
-    res=[]
     skew=df[col].skew()
     kurtosis=df[col].kurtosis()
-    res.append(skew,kurtosis)
+    res=[skew,kurtosis]
 
     return res
 
-def pie_chart(df:pd.DataFrame,col:str):
+def pie_chart(df:pd.DataFrame,col:str='reordered',save:bool=True):
     """
     Pie chart of column in the dataset 
     """
+    plt.figure(figsize=(12,8))
     df_counts=df[col].value_counts()
-    plt.pie(df_counts,labels=df_counts.index,autopct="%1.1f%")
+    plt.pie(df_counts,labels=df_counts.index,autopct="%1.1f%%")
     plt.title(f'{col} distribution (%)')
     plt.axis('equal')
+    if save:
+        plt.savefig(f'Project_1/plots/EDA/pie_{col}.png')
     plt.show()
 
-def bar_plot(df:pd.DataFrame,col:str):
+def bar_plot(df:pd.DataFrame,col:str,save:bool=True):
     """
     Bar chart of column in the dataset 
     """
@@ -63,28 +69,36 @@ def bar_plot(df:pd.DataFrame,col:str):
     plt.xlabel(f'{col}')
     plt.ylabel('count')
     plt.xticks(rotation=45)
+    if save:
+        plt.savefig(f'Project_1/plots/EDA/bar_{col}.png')
     plt.show()
 
-def box_plot_bivariate(df:pd.DataFrame,col1:str,col2:str):
+def box_plot_bivariate(df:pd.DataFrame,col1:str,col2:str,save:bool=True):
     """
     Box plot for bivariate analysis
     """
+    plt.figure(figsize=(10,20))
     sns.boxplot(data=df,x=col1,y=col2)
     plt.xticks(rotation=45)
+    if save:
+        plt.savefig(f'Project_1/plots/EDA/box_bivariate_{col1}.png')
     plt.show()
 
-def cross_tab_heatmap(df:pd.DataFrame,col1:str,col2:str):
+def cross_tab_heatmap(df:pd.DataFrame,col1:str,col2:str,save:bool):
     """
     Cross tab and heatmap for bivariate analysis
     """
+    plt.figure(figsize=(15, 8))
     new_data=pd.crosstab(df[col1],df[col2])
     sns.heatmap(new_data,cmap='viridis',annot=True,fmt='d')
     plt.title(f'{col1} vs {col2}')
-    plt.xlabel(f'{col1}')
-    plt.ylabel(f'{col2}')
+    plt.xlabel(f'{col2}')
+    plt.ylabel(f'{col1}')
+    if save:
+        plt.savefig(f'Project_1/plots/EDA/cross_heatmap{col1}.png')
     plt.show()
 
-def countplot(df:pd.DataFrame,col:str):
+def countplot(df:pd.DataFrame,col:str,save:bool=True):
     """
     Countplot of a column
     """
@@ -92,6 +106,8 @@ def countplot(df:pd.DataFrame,col:str):
     sns.countplot(data=df, x=col)
     plt.ylabel('Count')
     plt.xticks(rotation=45)
+    if save:
+        plt.savefig('Project_1/plots/EDA/count_plot_for_binning.png')
     plt.show()
 
 def assign_time_period(hour):
@@ -164,36 +180,37 @@ def peak_hours(row):
         else:
             return 'Weekday Off-Peak'
 
-def apply_binning(stratified_df: pd.DataFrame, col1:str, col2:str):
+def apply_binning(stratified_df: pd.DataFrame):
     """
-    Applying binning and bucketing by calling the other functions
+    Applies binning and bucketing by calling the other functions.
+    Adds new columns to the DataFrame based on time of day, customer type, etc.
     """
-
     required_columns = ['order_hour_of_day', 'order_number', 'days_since_prior_order', 'order_dow']
+    
     for col in required_columns:
         if col not in stratified_df.columns:
             raise ValueError(f"Missing column: {col}")
-
-
+    
     stratified_df['time_of_day'] = stratified_df['order_hour_of_day'].apply(assign_time_period)
     stratified_df['customer_type'] = stratified_df['order_number'].apply(order_frequency)
     stratified_df['order_recency'] = stratified_df['days_since_prior_order'].apply(days_since_order_category)
     stratified_df['peak_category'] = stratified_df.apply(peak_hours, axis=1)
+    
+    return stratified_df
 
-
-
-
-def analyze_reorder_probability(df: pd.DataFrame, feature1, feature2, threshold=100):
+def analyze_reorder_probability(df: pd.DataFrame, feature1, feature2, threshold=100,save:bool=True):
     """
     Finding reorder probability and heatmap together 
     """
-
+    plt.figure(figsize=(12,10))
     pivot = df.groupby([feature1, feature2])['reordered'].agg(['mean', 'count']).reset_index()
     pivot = pivot[pivot['count'] > threshold]  
     
     pivot_table = pivot.pivot(index=feature1, columns=feature2, values='mean')
     sns.heatmap(pivot_table, cmap='YlOrRd', annot=True, fmt='.2f')
     plt.title(f'Reorder Probability: {feature1} vs {feature2}')
+    if save:
+        plt.savefig(f'Project_1/plots/EDA/analyze_{feature1}.png')
     plt.show()
     
     return pivot_table
@@ -213,6 +230,8 @@ def run_statistical_tests(stratified_df: pd.DataFrame, col1:str, col2:str, signi
     Perform and print the results of ANOVA, Kruskal-Wallis, and Chi-Square tests.
     """
 
+    test={}
+
     if col1 not in stratified_df.columns or col2 not in stratified_df.columns:
         raise ValueError(f"Columns {col1} or {col2} are missing from the DataFrame.")
     
@@ -221,21 +240,108 @@ def run_statistical_tests(stratified_df: pd.DataFrame, col1:str, col2:str, signi
     departments = stratified_df_clean['department'].unique()
     days_by_dept = [stratified_df_clean[stratified_df_clean['department'] == dept][col2] 
                     for dept in departments]
-    
-    f_stat, p_val = f_oneway(*days_by_dept)
-    print_test_results("ANOVA Test: Days Since Prior Order across Departments", f_stat, p_val, significance_level)
 
+    f_stat, p_val = f_oneway(*days_by_dept)
+    test["ANOVA"] = {
+        "test_name": "ANOVA Test: Days Since Prior Order across Departments",
+        "statistic": f_stat,
+        "p_value": p_val,
+        "significant": p_val < significance_level
+    }
     h_stat, p_val = scipy.stats.kruskal(*days_by_dept)
-    print_test_results("Kruskal-Wallis H-test: Days Since Prior Order across Departments", h_stat, p_val, significance_level)
+    f_stat, p_val = f_oneway(*days_by_dept)
+    test["KRUSKAL"] = {
+        "test_name": "KRUSKAL Test: Days Since Prior Order across Departments",
+        "statistic": f_stat,
+        "p_value": p_val,
+        "significant": p_val < significance_level
+    }
 
     dept_reorder_counts = pd.crosstab(stratified_df_clean['department'], stratified_df_clean['reordered'])
     
     chi2, p_value, dof, expected = chi2_contingency(dept_reorder_counts)
-    print("\nChi-square test results for Department vs Reordered:")
-    print(f"Chi-square statistic: {chi2:.2f}")
-    print(f"P-value: {p_value:.10f}")
-    print(f"Degrees of Freedom: {dof}")
-    print(f"Expected frequencies:\n{expected}")
-    print(f"Significant at {significance_level} level: {p_value < significance_level}")
+    test["Chi-Square"] = {
+        "test_name": "Chi-square Test: Department vs Reordered",
+        "statistic": chi2,
+        "p_value": p_value,
+        "degrees_of_freedom": dof,
+        "expected_frequencies": expected,
+        "significant": p_value < significance_level
+        
+    }
+    for test_name, result in test.items():
+        print_test_results(result["test_name"], result["statistic"], result["p_value"], significance_level)
 
-# Can add save = True in function as a flag if user wants to save the plot or just show the plot
+    return test
+
+
+def plot_reorder_rate_heatmap(df: pd.DataFrame, hour_col: str = 'order_hour_of_day', dow_col: str = 'order_dow', reorder_col: str = 'reordered', figsize: tuple = (15, 10),save:bool=True):
+    """
+    Creates a heatmap for reorder rates by hour and day of the week
+    """
+    pivot_table = df.pivot_table(
+        values=reorder_col,
+        index=hour_col,
+        columns=dow_col,
+        aggfunc='mean'
+    )
+    plt.figure(figsize=figsize)
+    sns.heatmap(pivot_table, cmap='viridis', annot=True, fmt='.2f')
+    plt.title('Reorder Rate by Hour and Day of Week')
+    plt.xlabel('Day of Week')
+    plt.ylabel('Hour of Day')
+    if save:
+        plt.savefig(f'Project_1/plots/EDA/rate_heatmap_{hour_col}.png')
+    plt.show()
+
+
+def plot_mean_add_to_cart_order_by_hour(df: pd.DataFrame, hour_col: str = 'order_hour_of_day', cart_order_col: str = 'add_to_cart_order', figsize: tuple = (15, 6),save:bool=True):
+    """
+    Plots the mean add_to_cart_order by hour of the day
+    """
+    mean_cart_order = df.groupby(hour_col)[cart_order_col].mean()
+
+    plt.figure(figsize=figsize)
+    mean_cart_order.plot(kind='line', marker='o')
+    plt.title('Average Add to Cart Order by Hour of Day')
+    plt.xlabel('Hour of Day')
+    plt.ylabel('Mean Add to Cart Order')
+    plt.grid(True)
+    plt.tight_layout()
+    if save:
+        plt.savefig(f'Project_1/plots/EDA/mean_add_{hour_col}.png')
+    plt.show()
+
+
+def plot_reorder_rate_by_category(df: pd.DataFrame, category_col: str = 'department', target_col: str = 'reordered', colors: list = ['#1f77b4'], figsize: tuple = (15, 6),save:bool=True):
+    """
+    Creates a bar plot showing the reorder rate by category (e.g., department)
+    """
+
+    reorder_rate = pd.crosstab(df[category_col], df[target_col], normalize='index') * 100
+    
+    plt.figure(figsize=figsize)
+    reorder_rate[1].sort_values(ascending=False).plot(kind='bar', color=colors[0])
+    plt.title(f'Reorder Rate by {category_col.capitalize()}')
+    plt.xlabel(category_col.capitalize())
+    plt.ylabel('Reorder Rate (%)')
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    if save:
+        plt.savefig(f'Project_1/plots/EDA/reorder_rate_{target_col}.png')
+    plt.show()
+
+
+def plot_correlation_matrix(df: pd.DataFrame, numerical_cols: list, figsize: tuple = (10, 8), cmap: str = 'coolwarm',save:bool=True):
+    """
+    Plots a heatmap for the correlation matrix of numerical variables
+    """
+    correlation_matrix = df[numerical_cols].corr()
+    
+    plt.figure(figsize=figsize)
+    sns.heatmap(correlation_matrix, annot=True, cmap=cmap, center=0)
+    plt.title('Correlation Matrix of Numerical Variables')
+    plt.tight_layout()
+    if save:
+        plt.savefig(f'Project_1/plots/EDA/correlation_matrix{numerical_cols}.png')
+    plt.show()
