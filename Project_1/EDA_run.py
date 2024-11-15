@@ -100,7 +100,8 @@ numerical_cols = ['add_to_cart_order', 'reordered', 'order_number',
 plot_correlation_matrix(df, numerical_cols)
 
 # statistical tests 
-run_statistical_tests(stratified_df=df,col1='department',col2='days_since_prior_order')
+result = run_statistical_tests(stratified_df, col1='department', col2='days_since_prior_order',json_file_path='Project_1/plots/EDA/test_results.json')
+
 
 
 
