@@ -1,9 +1,4 @@
-pandas: For data manipulation and analysis.
-numpy: For numerical operations and handling arrays.
-mlxtend: For association rule mining and the Apriori algorithm.
-matplotlib and seaborn: For visualizations.
-scipy: For statistical calculations, if needed.
-plotly (optional): For interactive plots.
+
 pandas==1.5.3
 numpy==1.23.4
 mlxtend==0.24.0
