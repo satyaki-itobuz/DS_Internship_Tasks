@@ -1,23 +1,18 @@
-from src.data_preprocessing import *
+from src.EDA_data_preprocessing import *
 from src.eda import *
-
-# storing the location of the csv files 
-data1= "/Users/it012305/Downloads/project_1_dataset/aisles.csv"
-data2= "/Users/it012305/Downloads/project_1_dataset/orders.csv"
-data3= "/Users/it012305/Downloads/project_1_dataset/order_products.csv"
-data4= "/Users/it012305/Downloads/project_1_dataset/products.csv"
-data5= "/Users/it012305/Downloads/project_1_dataset/departments.csv"
-
-# performing preprocessing steps
+from config import *
+from src.utils import *
 
 # loading data
-aisles=load_data(data1)
-orders=load_data(data2)
-order_pro=load_data(data3)
-pro=load_data(data4)
-dept=load_data(data5)
+aisles=load_data(aisles)
+orders=load_data(order)
+order_pro=load_data(order_products)
+pro=load_data(products)
+dept=load_data(departments)
 
-# merging data
+print("done")
+
+# merging data 
 pro1=merging_data(df1=pro,df2=dept,on_column='department_id')
 pro2=merging_data(df1=pro1,df2=aisles,on_column='aisle_id')
 pro3=merging_data(df1=pro2,df2=order_pro,on_column='product_id')
@@ -30,7 +25,7 @@ df=clean_data(df=df,col='eval_set')
 df=missing_values(df=df,col='days_since_prior_order')
 
 # stratified sampling 
-df=stratified_sample(df=df,stratify_col='product_name',frac=0.1)
+df=stratified_sample(df=df,stratify_col='product_name',frac=frac)
 
 # histogram of numerical columns 
 columns_to_plot = ['add_to_cart_order','order_number','days_since_prior_order','order_hour_of_day'] 
@@ -100,7 +95,7 @@ numerical_cols = ['add_to_cart_order', 'reordered', 'order_number',
 plot_correlation_matrix(df, numerical_cols)
 
 # statistical tests 
-result = run_statistical_tests(stratified_df, col1='department', col2='days_since_prior_order',json_file_path='Project_1/plots/EDA/test_results.json')
+result = run_statistical_tests(stratified_df, col1='department', col2='days_since_prior_order',json_file_path=json_path)
 
 
 
