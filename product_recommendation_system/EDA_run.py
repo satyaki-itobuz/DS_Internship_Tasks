@@ -17,7 +17,7 @@ order_pro=load_data(data3)
 pro=load_data(data4)
 dept=load_data(data5)
 
-# merging data
+# merging data 
 pro1=merging_data(df1=pro,df2=dept,on_column='department_id')
 pro2=merging_data(df1=pro1,df2=aisles,on_column='aisle_id')
 pro3=merging_data(df1=pro2,df2=order_pro,on_column='product_id')
