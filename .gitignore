@@ -1,2 +1,4 @@
-.data/
-.Project_1/results/*.json
+purchase_pattern_analysis/data/*.csv
+purchase_pattern_analysis/results/*.json
+purchase_pattern_analysis/__pycache__
+purchase_pattern_analysis/src/__pycache__
