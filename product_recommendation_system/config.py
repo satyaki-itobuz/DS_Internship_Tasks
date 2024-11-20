@@ -8,6 +8,6 @@ departments= "/Users/it012305/Downloads/project_1_dataset/departments.csv"
 
 frac=0.1
 
-json_path='Project_1/plots/EDA/test_results.json'
+json_path='./plots/EDA/test_results.json'
 
-file_loc= "Project_1/plots/EDA/"
+file_loc= "./plots/EDA/"

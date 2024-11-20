@@ -10,8 +10,6 @@ order_pro=load_data(order_products)
 pro=load_data(products)
 dept=load_data(departments)
 
-print("done")
-
 # merging data 
 pro1=merging_data(df1=pro,df2=dept,on_column='department_id')
 pro2=merging_data(df1=pro1,df2=aisles,on_column='aisle_id')
@@ -96,6 +94,8 @@ plot_correlation_matrix(df, numerical_cols)
 
 # statistical tests 
 result = run_statistical_tests(stratified_df, col1='department', col2='days_since_prior_order',json_file_path=json_path)
+
+print("done")
 
 
 

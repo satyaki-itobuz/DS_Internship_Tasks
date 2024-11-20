@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt 
 import seaborn as sns 
 import pandas as pd
+import numpy as np
 from scipy.stats import f_oneway, kruskal, chi2_contingency
 import json
 from config import *
@@ -23,7 +24,7 @@ def plot_histogram(df:pd.DataFrame,col:str,save:bool):
     plt.ylabel('count')
     if save:
         plt.savefig(f'{file_loc}hist_{col}.png')
-    plt.show()
+    #plt.show()
 
 def plot_boxplot(df:pd.DataFrame,col:str,save:bool):
     """
@@ -35,7 +36,7 @@ def plot_boxplot(df:pd.DataFrame,col:str,save:bool):
     plt.ylabel('frequency')
     if save:
         plt.savefig(f'{file_loc}box_{col}.png')
-    plt.show()
+    #plt.show()
 
 def skew_kurtosis(df:pd.DataFrame,col:str) -> list:
     """
@@ -58,7 +59,7 @@ def pie_chart(df:pd.DataFrame,col:str='reordered',save:bool=True):
     plt.axis('equal')
     if save:
         plt.savefig(f'{file_loc}pie_{col}.png')
-    plt.show()
+    #plt.show()
 
 def bar_plot(df:pd.DataFrame,col:str,save:bool=True):
     """
@@ -71,7 +72,7 @@ def bar_plot(df:pd.DataFrame,col:str,save:bool=True):
     plt.xticks(rotation=45)
     if save:
         plt.savefig(f'{file_loc}bar_{col}.png')
-    plt.show()
+    #plt.show()
 
 def box_plot_bivariate(df:pd.DataFrame,col1:str,col2:str,save:bool=True):
     """
@@ -82,7 +83,7 @@ def box_plot_bivariate(df:pd.DataFrame,col1:str,col2:str,save:bool=True):
     plt.xticks(rotation=45)
     if save:
         plt.savefig(f'{file_loc}box_bivariate_{col1}.png')
-    plt.show()
+    #plt.show()
 
 def cross_tab_heatmap(df:pd.DataFrame,col1:str,col2:str,save:bool):
     """
@@ -96,7 +97,7 @@ def cross_tab_heatmap(df:pd.DataFrame,col1:str,col2:str,save:bool):
     plt.ylabel(f'{col1}')
     if save:
         plt.savefig(f'{file_loc}cross_heatmap{col1}.png')
-    plt.show()
+    #plt.show()
 
 def countplot(df:pd.DataFrame,col:str,save:bool=True):
     """
@@ -108,7 +109,7 @@ def countplot(df:pd.DataFrame,col:str,save:bool=True):
     plt.xticks(rotation=45)
     if save:
         plt.savefig(f'{file_loc}count_plot_for_binning.png')
-    plt.show()
+    #plt.show()
 
 def assign_time_period(hour):
     """
@@ -211,7 +212,7 @@ def analyze_reorder_probability(df: pd.DataFrame, feature1, feature2, threshold=
     plt.title(f'Reorder Probability: {feature1} vs {feature2}')
     if save:
         plt.savefig(f'{file_loc}analyze_{feature1}.png')
-    plt.show()
+    #plt.show()
     
     return pivot_table
 
@@ -279,6 +280,17 @@ def run_statistical_tests(stratified_df: pd.DataFrame, col1: str, col2: str, sig
     Perform and print the results of ANOVA, Kruskal-Wallis, and Chi-Square tests.
     Optionally saves the results to a JSON file.
     """
+
+    def convert_to_python_types(obj):
+        """Recursively converts NumPy types to native Python types (e.g., np.bool_ to bool)."""
+        if isinstance(obj, np.bool_):
+            return bool(obj)
+        elif isinstance(obj, dict):
+            return {key: convert_to_python_types(value) for key, value in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_to_python_types(item) for item in obj]
+        return obj
+    
     test = {}
 
     if col1 not in stratified_df.columns or col2 not in stratified_df.columns:
@@ -324,6 +336,7 @@ def run_statistical_tests(stratified_df: pd.DataFrame, col1: str, col2: str, sig
     for test_name, result in test.items():
         print_test_results(result["test_name"], result["statistic"], result["p_value"], significance_level)
 
+    test = convert_to_python_types(test)
     
     if json_file_path:
         with open(json_file_path, 'w') as f:
@@ -350,7 +363,7 @@ def plot_reorder_rate_heatmap(df: pd.DataFrame, hour_col: str = 'order_hour_of_d
     plt.ylabel('Hour of Day')
     if save:
         plt.savefig(f'{file_loc}rate_heatmap_{hour_col}.png')
-    plt.show()
+    #plt.show()
 
 
 def plot_mean_add_to_cart_order_by_hour(df: pd.DataFrame, hour_col: str = 'order_hour_of_day', cart_order_col: str = 'add_to_cart_order', figsize: tuple = (15, 6),save:bool=True):
@@ -368,7 +381,7 @@ def plot_mean_add_to_cart_order_by_hour(df: pd.DataFrame, hour_col: str = 'order
     plt.tight_layout()
     if save:
         plt.savefig(f'{file_loc}mean_add_{hour_col}.png')
-    plt.show()
+    #plt.show()
 
 
 def plot_reorder_rate_by_category(df: pd.DataFrame, category_col: str = 'department', target_col: str = 'reordered', colors: list = ['#1f77b4'], figsize: tuple = (15, 6),save:bool=True):
@@ -387,7 +400,7 @@ def plot_reorder_rate_by_category(df: pd.DataFrame, category_col: str = 'departm
     plt.tight_layout()
     if save:
         plt.savefig(f'{file_loc}reorder_rate_{target_col}.png')
-    plt.show()
+    #plt.show()
 
 
 def plot_correlation_matrix(df: pd.DataFrame, numerical_cols: list, figsize: tuple = (10, 8), cmap: str = 'coolwarm',save:bool=True):
@@ -402,4 +415,4 @@ def plot_correlation_matrix(df: pd.DataFrame, numerical_cols: list, figsize: tup
     plt.tight_layout()
     if save:
         plt.savefig(f'{file_loc}correlation_matrix{numerical_cols}.png')
-    plt.show()
+    #plt.show()
