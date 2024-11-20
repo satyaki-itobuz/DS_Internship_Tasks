@@ -1,4 +1,4 @@
-from src.EDA_data_preprocessing import *
+from src.eda_data_preprocessing import *
 from src.eda import *
 from config import *
 from src.utils import *
