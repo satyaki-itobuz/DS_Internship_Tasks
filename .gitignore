@@ -1,1 +1,2 @@
-product_recommendation_system/src/data
+__pycache__
+src/__pycache__
