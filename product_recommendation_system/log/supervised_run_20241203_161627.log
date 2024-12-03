@@ -1,2 +1,0 @@
-2024-12-03 16:16:27 - src.data_preprocessing - ERROR - No data found on given path : [Errno 2] No such file or directory: "'../data/filename.csv'"
-2024-12-03 16:16:27 - root - ERROR - Error during data loading and preprocessing: cannot access local variable 'df' where it is not associated with a value
