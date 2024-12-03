@@ -1,8 +1,11 @@
 # DEPENDENCIES
+import logging
 import pandas as pd
 from .utils import encode_units
 from mlxtend.frequent_patterns import apriori, association_rules
 
+# GET LOGGEER 
+logger = logging.getLogger(__name__)
 
 # FUNCTIONALITIES
 def market_basket_analysis(orders_data: pd.DataFrame, products_data:pd.DataFrame, ) :
@@ -27,16 +30,20 @@ def market_basket_analysis(orders_data: pd.DataFrame, products_data:pd.DataFrame
     """
     # Type Checking 
     if not isinstance(orders_data, pd.DataFrame):
+        logger.warning(f"Expected a pandas DataFrame object, got : {type(orders_data)} instead")
         return repr(TypeError(f"Expected a pandas DataFrame object, got : {type(orders_data)} instead"))
 
     if not isinstance(products_data, pd.DataFrame):
+        logger.warning(f"Expected a pandas DataFrame object, got : {type(products_data)} instead")
         return repr(TypeError(f"Expected a pandas DataFrame object, got : {type(products_data)} instead"))
 
     # Data Validation
     if (len(orders_data) < 2):
+        logger.warning(f"InsufficientData : As the input orders_data if of length : {len(orders_data)}, no further processing possible")
         return repr(f"InsufficientData : As the input orders_data if of length : {len(orders_data)}, no further processing possible")
 
     if (len(products_data) < 2):
+        logger.warning(f"InsufficientData : As the input orders_data if of length : {len(products_data)}, no further processing possible")
         return repr(f"InsufficientData : As the input products_data if of length : {len(products_data)}, no further processing possible")
 
     
@@ -50,33 +57,43 @@ def market_basket_analysis(orders_data: pd.DataFrame, products_data:pd.DataFrame
 
         count = count.sort_values('frequency', ascending=False)[0:100].reset_index(drop=True)
         count = count.merge(products_data, on='product_id', how='left')
-        print(count.head(10))
+        #logger.info(count.head(10))
+        # print(count.head(10))
 
         freq_products = list(count.product_id)
-        print(freq_products[:10])
+        #logger.info(freq_products[:10])
+        # print(freq_products[:10])
 
-        print(len(freq_products))
+        logger.info(len(freq_products))
+        # print(len(freq_products))
 
         orders_data = orders_data[orders_data.product_id.isin(freq_products)]
-        print(orders_data.shape)
+        logger.info(orders_data.shape)
+        # print(orders_data.shape)
 
-        print(orders_data.order_id.nunique())
+        logger.info(orders_data.order_id.nunique())
+        # print(orders_data.order_id.nunique())
         orders_data = orders_data.merge(products_data, on='product_id', how='left')
-        print(orders_data.head())
+        # logger.info(orders_data.head())
+        # print(orders_data.head())
 
         basket = orders_data.groupby(['order_id', 'product_name'])['reordered'].count().unstack().reset_index().fillna(0).set_index('order_id')
-        print(basket.head())
+        # logger.info(basket.head())
+        # print(basket.head())
 
         basket = basket.applymap(encode_units)
-        print(basket.head())
+        # logger.info(basket.head())
+        # print(basket.head())
 
     
 
         frequent_items = apriori(basket, min_support=0.005, use_colnames=True, low_memory=True)
-        print(frequent_items.head())
+        # logger.info(frequent_items.head())
+        # print(frequent_items.head())
 
         rules = association_rules(frequent_items, metric="lift", min_threshold=1, num_itemsets=10)
-        print(rules.sort_values('lift', ascending=False))
+        logger.info(rules.sort_values('lift', ascending=False))
+        # print(rules.sort_values('lift', ascending=False))
 
         # Product Bundling
         high_lift_conf_rules = rules[(rules['lift'] > 2) & (rules['confidence'] > 0.2)]
@@ -87,8 +104,8 @@ def market_basket_analysis(orders_data: pd.DataFrame, products_data:pd.DataFrame
         return product_bundles
 
     except Exception as MarketBasketAnalysisError:
-        #return (f"MarketBasketAnalysisError: While performing market basket analysis, got error: {repr(MarketBasketAnalysisError)}")
-        raise
+        logger.error(f"MarketBasketAnalysisError: While performing market basket analysis, got error: {repr(MarketBasketAnalysisError)}")
+        return (f"MarketBasketAnalysisError: While performing market basket analysis, got error: {repr(MarketBasketAnalysisError)}")
 
 
 # -*- coding: utf-8 -*-
