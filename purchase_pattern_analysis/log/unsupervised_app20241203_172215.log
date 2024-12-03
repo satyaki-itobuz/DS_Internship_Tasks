@@ -1,0 +1,53 @@
+2024-12-03 17:22:45 - root - INFO -    order_id  product_id  add_to_cart_order  reordered  user_id eval_set  ...  order_dow  order_hour_of_day  days_since_prior_order           product_name aisle_id  department_id
+0         2       33120                  1          1   202279    prior  ...          5                  9                     8.0     Organic Egg Whites       86             16
+1         2       28985                  2          1   202279    prior  ...          5                  9                     8.0  Michigan Organic Kale       83              4
+2         2        9327                  3          0   202279    prior  ...          5                  9                     8.0          Garlic Powder      104             13
+3         2       45918                  4          1   202279    prior  ...          5                  9                     8.0         Coconut Butter       19             13
+4         2       30035                  5          0   202279    prior  ...          5                  9                     8.0      Natural Sweetener       17             13
+
+[5 rows x 13 columns]
+2024-12-03 17:23:26 - src.Customer_Segmentation - INFO - Training set size: 324344 rows
+2024-12-03 17:23:26 - src.Customer_Segmentation - INFO - Testing set size: 32110145 rows
+2024-12-03 17:23:26 - src.Customer_Segmentation - INFO - User ID distribution in training set
+2024-12-03 17:23:26 - src.Customer_Segmentation - INFO - user_id
+201268    0.000114
+129928    0.000111
+164055    0.000096
+33731     0.000089
+176478    0.000089
+            ...   
+77853     0.000003
+92756     0.000003
+100822    0.000003
+120602    0.000003
+37156     0.000003
+Name: proportion, Length: 143811, dtype: float64
+2024-12-03 17:23:26 - src.Customer_Segmentation - INFO - User ID distribution in training set:
+2024-12-03 17:23:28 - src.Customer_Segmentation - INFO - user_id
+201268    1.148547e-04
+129928    1.121764e-04
+164055    9.436270e-05
+186704    9.053214e-05
+176478    9.006499e-05
+              ...     
+98654     9.342842e-08
+22226     9.342842e-08
+170850    9.342842e-08
+204913    9.342842e-08
+49581     9.342842e-08
+Name: proportion, Length: 206209, dtype: float64
+2024-12-03 17:25:01 - src.Customer_Segmentation - INFO - [[ 1.05943898e-01 -7.37234595e-02  1.74549833e-02  3.85717509e-03
+   1.73891813e-03 -4.59752137e-03 -9.51138160e-04  1.23532653e-03
+  -1.41166045e-04  7.98762597e-04]
+ [-7.44190825e-02 -1.09803311e-02 -2.69311123e-02 -6.83521921e-03
+  -6.87709542e-03  1.44404408e-03  5.34625582e-04 -2.56665196e-03
+  -3.05433785e-04 -4.20426187e-04]
+ [ 6.62656379e-02  1.03657062e-01 -1.45537364e-03 -3.09600957e-02
+  -1.00987627e-02  7.48824093e-03 -6.07667166e-04  4.56089434e-03
+  -7.76579789e-04 -1.26655556e-04]
+ [-5.80775549e-03  1.31380218e-01  4.95493224e-03  2.30260778e-01
+   1.09694261e-01 -2.30294126e-02  9.02322558e-05 -6.46235616e-03
+   7.89776493e-03  2.89392356e-03]
+ [-1.99487857e-01  1.60956893e-02  3.20324808e-01 -3.15853844e-02
+   1.90352780e-02  7.87795583e-04  4.29873255e-03  1.10070940e-02
+   9.89946474e-04 -3.92401694e-03]]
