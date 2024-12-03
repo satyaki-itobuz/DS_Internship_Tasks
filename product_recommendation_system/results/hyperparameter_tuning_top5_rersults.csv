@@ -1,0 +1,6 @@
+params,test_accuracy
+"{'penalty': 'l1', 'C': 0.01, 'solver': 'liblinear', 'tol': 0.0001}",0.8593669070071445
+"{'penalty': 'l1', 'C': 10, 'solver': 'liblinear', 'tol': 0.0001}",0.8593530333051064
+"{'penalty': 'l1', 'C': 0.1, 'solver': 'liblinear', 'tol': 0.0001}",0.8593463533744954
+"{'penalty': 'l1', 'C': 100, 'solver': 'liblinear', 'tol': 0.0001}",0.8593458395336792
+"{'penalty': 'l1', 'C': 1, 'solver': 'liblinear', 'tol': 0.0001}",0.8592661942071642
