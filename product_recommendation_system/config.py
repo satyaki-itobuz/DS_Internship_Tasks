@@ -10,7 +10,7 @@ random_state   = 42
 target_column  = 'reordered'
 data_file_path = 'data/hyperparameter_tuning_dataset.csv'
 
-json_path           = './plots/EDA/test_results.json'
+json_path      = './plots/EDA/test_results.json'
 
 file_loc       = "./plots/EDA/"
 
