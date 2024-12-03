@@ -1,20 +1,26 @@
+import os
 import logging
+from datetime import datetime
+from config import PREPROCESSED_CSV
 from src.hyperparameter_tuning import load_dataset, data_split, objective_function
 from src.hyperparameter_tuning import create_load_study, hyperparameter_tuning, best_trial
 
-LOG_FILE = "results/tuning_run.log"
-logging.basicConfig(
-    filename=LOG_FILE,
-    level=logging.INFO,  
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    filemode="w" 
-)
+current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+log_file = f"log/tuning_run_{current_time}.log"
 
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler(log_file),
+    ],
+)
 
 logging.info("Starting the hyperparameter tuning process.")
     
 try:
-    data = load_dataset()
+    data = load_dataset(PREPROCESSED_CSV)
     logging.info("Dataset loaded successfully.")
         
     X_train, X_test, y_train, y_test = data_split(data)
@@ -23,7 +29,7 @@ try:
     study = create_load_study()
     logging.info("Study created/loaded.")
         
-    study = hyperparameter_tuning(1)
+    study = hyperparameter_tuning(1,study,X_train, X_test, y_train, y_test)
     logging.info("Hyperparameter tuning completed.")
         
     x, y = best_trial(study)
