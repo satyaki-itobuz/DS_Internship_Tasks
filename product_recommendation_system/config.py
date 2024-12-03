@@ -13,11 +13,8 @@ data_file_path = 'data/hyperparameter_tuning_dataset.csv'
 json_path      = './plots/EDA/test_results.json'
 
 file_loc       = "./plots/EDA/"
-<<<<<<< HEAD
 final_model_path = 'best_model.pkl'
-=======
 
 stratified_sample_data = ''
 hyperparameter_tuning_total_results = 'results/hyperparameter_tuning_total_rersults.json'
 hyperparameter_tuning_top5_results  = 'results/hyperparameter_tuning_top5_rersults.csv'
->>>>>>> 618fc7d81e9a1ed3d0795a7ae63d1ca3427fb78f
