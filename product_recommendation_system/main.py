@@ -1,6 +1,6 @@
-from Src.data_preprocessing import load_and_preprocess_data, split_data
-from Src.model_selection import model_selection,evaluate_model
-from Src.training import model_final
+from src.data_preprocessing import load_and_preprocess_data, split_data
+from src.model_selection import model_selection,evaluate_model
+from src.training import model_final
 from sklearn.linear_model import LogisticRegression, RidgeClassifier, SGDClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
