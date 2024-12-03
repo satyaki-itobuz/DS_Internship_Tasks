@@ -1,0 +1,36 @@
+2024-12-03 17:29:10,912 - INFO - Starting feature.py script.
+2024-12-03 17:29:10,912 - INFO - Loading the dataset from 'data/product_dataset.csv'.
+2024-12-03 17:29:30,158 - INFO - Dataset loaded successfully. Shape: (9730347, 24)
+2024-12-03 17:29:30,395 - INFO - Running feature engineering function from src.
+2024-12-03 17:29:30,400 - INFO - Starting the feature engineering process.
+2024-12-03 17:29:30,404 - INFO - Creating time_of_day feature based on order_hour_of_day.
+2024-12-03 17:29:32,323 - INFO - Calculating days_since_last_purchase.
+2024-12-03 17:29:34,225 - INFO - Creating various aggregation features.
+2024-12-03 17:29:44,164 - INFO - Performing target encoding on categorical features.
+2024-12-03 17:29:44,844 - INFO - Computing correlation matrix and dropping highly correlated features.
+2024-12-03 17:30:02,539 - INFO - Scaling selected features using MinMaxScaler.
+2024-12-03 17:30:05,586 - INFO - Splitting the data into training, testing, and validation sets.
+2024-12-03 17:30:10,494 - INFO - Training Logistic Regression model.
+2024-12-03 17:33:34,607 - INFO - Evaluating the model on the test set.
+2024-12-03 17:33:36,434 - INFO - Model Accuracy: 0.9520
+2024-12-03 17:33:36,434 - INFO - Model F1 Score: 0.9597
+2024-12-03 17:33:36,434 - INFO - Computing feature importance using Logistic Regression coefficients.
+2024-12-03 17:33:36,445 - INFO - Saving the trained model.
+2024-12-03 17:33:36,447 - INFO - Generating confusion matrix heatmap.
+2024-12-03 17:34:09,334 - INFO - Feature engineering process completed successfully.
+2024-12-03 17:34:09,582 - INFO - Feature engineering completed. Processed DataFrame shape: (9730347, 24)
+2024-12-03 17:34:09,582 - INFO - Saving the processed DataFrame to data/processed_dataset.csv.
+2024-12-03 17:36:17,678 - INFO - Processed DataFrame saved successfully.
+2024-12-03 17:41:34,537 - INFO - Starting feature.py script.
+2024-12-03 17:41:34,537 - INFO - Loading the dataset from 'data/product_dataset.csv'.
+2024-12-03 17:41:53,942 - INFO - Dataset loaded successfully. Shape: (9730347, 24)
+2024-12-03 17:41:53,968 - INFO - Running feature engineering function from src.
+2024-12-03 17:41:53,974 - INFO - Starting the feature engineering process.
+2024-12-03 17:41:53,974 - INFO - Creating time_of_day feature based on order_hour_of_day.
+2024-12-03 17:41:55,866 - INFO - Calculating days_since_last_purchase.
+2024-12-03 17:41:57,725 - INFO - Creating various aggregation features.
+2024-12-03 17:42:07,297 - INFO - Performing target encoding on categorical features.
+2024-12-03 17:42:08,000 - INFO - Computing correlation matrix and dropping highly correlated features.
+2024-12-03 17:42:28,316 - INFO - Scaling selected features using MinMaxScaler.
+2024-12-03 17:42:31,592 - INFO - Splitting the data into training, testing, and validation sets.
+2024-12-03 17:42:36,857 - INFO - Training Logistic Regression model.
