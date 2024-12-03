@@ -1,69 +1,130 @@
+import logging
 import pandas as pd
+import numpy as np
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression, Lasso
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, classification_report
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pickle
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler('feature_engineering.log')
+    ]
+)
+logger = logging.getLogger(__name__)
 
 def feature_engineering(df):
-    # Target encoding for 'department'
-    department_target_encoding = df.groupby('department')['reordered'].mean()
-    df['department_encoded'] = df['department'].map(department_target_encoding)
+    try:
+        # Log the start of the process
+        logger.info("Starting the feature engineering process.")
 
-    # Target encoding for 'aisle'
-    aisle_target_encoding = df.groupby('aisle')['reordered'].mean()
-    df['aisle_encoded'] = df['aisle'].map(aisle_target_encoding)
+        # Time of Day Buckets
+        logger.info("Creating time_of_day feature based on order_hour_of_day.")
+        df['time_of_day'] = df['order_hour_of_day'].apply(
+            lambda hour: 0 if hour < 12 else (1 if hour < 18 else (2 if hour < 22 else 3))
+        )
 
-    # Target encoding for 'product_name'
-    product_name_target_encoding = df.groupby('product_name')['reordered'].mean()
-    df['product_name_encoded'] = df['product_name'].map(product_name_target_encoding)
+        # Days Since Last Purchase
+        logger.info("Calculating days_since_last_purchase.")
+        df['days_since_last_purchase'] = df.groupby(['user_id', 'product_id'])['days_since_prior_order'].shift(-1).fillna(0)
 
-    # Drop original columns after encoding
-    df = df.drop(columns=['product_name', 'department', 'aisle'])
+        # Feature aggregations
+        logger.info("Creating various aggregation features.")
+        df['user_order_count'] = df.groupby('user_id')['order_id'].transform('count')
+        df['total_items_ordered'] = df.groupby('order_id')['add_to_cart_order'].transform('sum')
+        df['product_popularity'] = df.groupby('product_id')['order_id'].transform('count')
+        df['avg_order_hour'] = df.groupby('user_id')['order_hour_of_day'].transform('mean')
+        df['order_frequency'] = df.groupby(['user_id', 'product_id'])['order_id'].transform('count')
+        df['department_affinity'] = (
+            df.groupby(['user_id', 'department_id'])['order_id'].transform('count') /
+            df.groupby('user_id')['order_id'].transform('count')
+        )
+        df['preferred_order_hour'] = df.groupby('user_id')['order_hour_of_day'].transform('mean')
+        df['preferred_order_dow'] = df.groupby('user_id')['order_dow'].transform('mean')
+        df['avg_reorder_rate'] = df.groupby(['user_id'])['reordered'].transform('mean')
+        df['product_reorder_frequency'] = df.groupby('product_id')['reordered'].transform('sum')
+        df['user_product_reorder_rate'] = df.groupby(['user_id', 'product_id'])['reordered'].transform('mean')
+        df['user_product_order_count'] = df.groupby(['user_id', 'product_id'])['order_id'].transform('count')
 
-    # Define time of day buckets (morning, afternoon, evening, night)
-    def time_of_day(hour):
-        if hour < 12:
-            return 0  # Morning
-        elif hour < 18:
-            return 1  # Afternoon
-        elif hour < 22:
-            return 2  # Evening
-        else:
-            return 3  # Night
+        # Target Encoding
+        logger.info("Performing target encoding on categorical features.")
+        columns_to_encode = ['aisle', 'product_name', 'department']
+        target_column = 'reordered'
+        for col in columns_to_encode:
+            df[col] = df[col].map(df.groupby(col)[target_column].mean())
 
-    df['time_of_day'] = df['order_hour_of_day'].apply(time_of_day)
+        # Correlation Matrix and Feature Reduction
+        logger.info("Computing correlation matrix and dropping highly correlated features.")
+        correlation_matrix = df.corr()
+        columns_to_drop = [('order_hour_of_day', 'time_of_day'),
+                           ('product_popularity', 'product_reorder_frequency'),
+                           ('avg_order_hour', 'preferred_order_hour'),
+                           ('order_frequency', 'user_product_order_count')]
+        for col1, col2 in columns_to_drop:
+            df.drop(columns=[col2], inplace=True)
 
-    # Days Since Last Purchase (for each user-product pair)
-    df['days_since_last_purchase'] = df.groupby(['user_id', 'product_id'])['days_since_prior_order'].shift(-1).fillna(0)
+        # Feature Scaling
+        logger.info("Scaling selected features using MinMaxScaler.")
+        scaler = MinMaxScaler()
+        columns_to_scale = [
+            'product_id', 'order_id', 'add_to_cart_order', 'reordered', 'user_id',
+            'order_number', 'order_dow', 'order_hour_of_day', 'days_since_prior_order',
+            'days_since_last_purchase', 'user_order_count', 'total_items_ordered',
+            'product_popularity', 'avg_order_hour', 'order_frequency', 'department_affinity',
+            'preferred_order_dow', 'avg_reorder_rate', 'user_product_reorder_rate'
+        ]
+        df[columns_to_scale] = scaler.fit_transform(df[columns_to_scale])
 
-    # Number of orders per user
-    df['user_order_count'] = df.groupby('user_id')['order_id'].transform('count')
+        # Train-Test Split
+        logger.info("Splitting the data into training, testing, and validation sets.")
+        X = df.drop(columns=['reordered'])
+        y = df['reordered']
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+        X_test_final, X_val, y_test_final, y_val = train_test_split(X_test, y_test, test_size=0.15, random_state=42)
 
-    # Sum of items ordered per order (total items in each order)
-    df['total_items_ordered'] = df.groupby('order_id')['add_to_cart_order'].transform('sum')
+        # Logistic Regression
+        logger.info("Training Logistic Regression model.")
+        log_reg = LogisticRegression(max_iter=500, solver='lbfgs')
+        log_reg.fit(X_train, y_train)
 
-    # Total orders for each product
-    df['product_popularity'] = df.groupby('product_id')['order_id'].transform('count')
+        # Model Evaluation
+        logger.info("Evaluating the model on the test set.")
+        y_pred = log_reg.predict(X_test_final)
+        accuracy = accuracy_score(y_test_final, y_pred)
+        f1 = f1_score(y_test_final, y_pred)
+        logger.info(f"Model Accuracy: {accuracy:.4f}")
+        logger.info(f"Model F1 Score: {f1:.4f}")
 
-    # Average order hour for each user
-    df['avg_order_hour'] = df.groupby('user_id')['order_hour_of_day'].transform('mean')
+        # Feature Importance
+        logger.info("Computing feature importance using Logistic Regression coefficients.")
+        importance = np.abs(log_reg.coef_[0])
+        importance_df = pd.DataFrame({'Feature': X.columns, 'Importance': importance}).sort_values(by='Importance', ascending=False)
 
-    # Order Frequency (number of times a user has ordered a particular product)
-    df['order_frequency'] = df.groupby(['user_id', 'product_id'])['order_id'].transform('count')
+        # Saving the Model
+        logger.info("Saving the trained model.")
+        with open('model.pkl', 'wb') as f:
+            pickle.dump(log_reg, f)
 
-    # Product Affinity by Department (how much each user orders from each department)
-    df['department_affinity'] = df.groupby(['user_id', 'department_id'])['order_id'].transform('count') / df.groupby('user_id')['order_id'].transform('count')
+        # Visualization of Confusion Matrix
+        logger.info("Generating confusion matrix heatmap.")
+        cm = confusion_matrix(y_test_final, y_pred)
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Predicted 0', 'Predicted 1'], yticklabels=['Actual 0', 'Actual 1'])
+        plt.title('Confusion Matrix')
+        plt.xlabel('Predicted')
+        plt.ylabel('Actual')
+        plt.show()
 
-    # Time of Purchase Features: Preferred order hour and preferred order day of week
-    df['preferred_order_hour'] = df.groupby('user_id')['order_hour_of_day'].transform('mean')
-    df['preferred_order_dow'] = df.groupby('user_id')['order_dow'].transform('mean')
+        logger.info("Feature engineering process completed successfully.")
+        return df
 
-    # Average Reorder Rate for each user
-    df['avg_reorder_rate'] = df.groupby(['user_id'])['reordered'].transform('mean')
-
-    # Product Reorder Frequency across all users (how often each product gets reordered)
-    df['product_reorder_frequency'] = df.groupby('product_id')['reordered'].transform('sum')
-
-    # User's Reorder Rate for each product (how often a user reorders a particular product)
-    df['user_product_reorder_rate'] = df.groupby(['user_id', 'product_id'])['reordered'].transform('mean')
-
-    # Order Count for Product by User (how many times a user has ordered a particular product)
-    df['user_product_order_count'] = df.groupby(['user_id', 'product_id'])['order_id'].transform('count')
-
-    return df
+    except Exception as e:
+        logger.error(f"An error occurred during feature engineering: {e}")
+        raise
