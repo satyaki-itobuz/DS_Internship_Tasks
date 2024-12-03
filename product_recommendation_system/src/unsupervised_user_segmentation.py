@@ -1,17 +1,12 @@
 import pandas as pd
 import numpy as np
 import seaborn as sns
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans, DBSCAN
+from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 import matplotlib.pyplot as plt
-from sklearn.decomposition import PCA
 from sklearn.mixture import GaussianMixture
-from IPython.display import display
 from sklearn.mixture import GaussianMixture
 from sklearn.metrics import silhouette_score
-from matplotlib.patches import Ellipse
-
 
 
 def get_cluster_numbers_for_kmeans(scaled_features):
