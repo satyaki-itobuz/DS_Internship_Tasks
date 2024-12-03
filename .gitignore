@@ -1,4 +1,5 @@
 data/*.csv
+log/
 producproduct_recommendation_system/src/__pycache__
 producproduct_recommendation_system/__pycache__
 purchase_pattern_analysis/src/__pycache__
