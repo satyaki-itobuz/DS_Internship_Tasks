@@ -10,14 +10,16 @@ import optuna
 logger = logging.getLogger(__name__)
 
 # Loading the preprocessed dataset
-def load_dataset() -> pd.DataFrame:
+def load_dataset(path:str) -> pd.DataFrame:
     """
     Loads the dataset
+    Args:
+    - path (str): path to the dataset
     Returns:
     - data (dataframe): the loaded the dataset
     """
     try:
-        data = pd.read_csv("./data/preprocessed_data.csv")
+        data = pd.read_csv(filepath_or_buffer=path)
         data = data.drop(columns=(["Unnamed: 0","order_id","product_id","user_id","days_since_prior_order_binned"]))
         logger.info
         return data
@@ -44,7 +46,7 @@ def data_split(data:pd.DataFrame):
     return X_train, X_test, y_train, y_test
 
 # ObJective Function
-def objective_function(trial:optuna.trial) -> float:
+def objective_function(trial:optuna.trial,X_train, X_test, y_train, y_test) -> float:
     '''
     Objective Function whcih computes f1_score of the trained model.
     Args:
@@ -90,7 +92,7 @@ def create_load_study() -> optuna.study:
         logger.error(error)
 
 # Hyperparameter Tuning using optuna
-def hyperparameter_tuning(ntrial : int, study:optuna.study) -> optuna.study:
+def hyperparameter_tuning(ntrial : int, study:optuna.study,X_train, X_test, y_train, y_test) -> optuna.study:
     '''
     Performs Hyperparameter tuning on Model using optuna
     Requires a defined objective function to maximize
@@ -99,10 +101,12 @@ def hyperparameter_tuning(ntrial : int, study:optuna.study) -> optuna.study:
     - study (optuna.study) - study where all trial are stored
 
     Returns:
-    - study - stufy in which trails are done
+    - study - study in which trials are done
     '''
     try:
-        study.optimize(objective_function, n_trials=ntrial, n_jobs=2)
+        logger.info(f"Starting hypermeter tuning with {ntrial} trials.")
+        study.optimize(lambda trial: objective_function(trial, X_train, X_test, y_train, y_test), n_trials=ntrial, n_jobs=2)
+        logger.info("Hyperparameter tuning completed successfully.")
         return study
     except Exception as error:
         logger.error(error)
