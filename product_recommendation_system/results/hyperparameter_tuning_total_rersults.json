@@ -1,0 +1,137 @@
+[
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 0.01,
+            "solver": "liblinear",
+            "tol": 0.0001
+        },
+        "test_accuracy": 0.8593669070071445
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 0.01,
+            "solver": "liblinear",
+            "tol": 0.001
+        },
+        "test_accuracy": 0.8590817253541391
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 0.01,
+            "solver": "liblinear",
+            "tol": 0.01
+        },
+        "test_accuracy": 0.8580175610237354
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 0.1,
+            "solver": "liblinear",
+            "tol": 0.0001
+        },
+        "test_accuracy": 0.8593463533744954
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 0.1,
+            "solver": "liblinear",
+            "tol": 0.001
+        },
+        "test_accuracy": 0.8589003395460114
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 0.1,
+            "solver": "liblinear",
+            "tol": 0.01
+        },
+        "test_accuracy": 0.8510827653679511
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 1,
+            "solver": "liblinear",
+            "tol": 0.0001
+        },
+        "test_accuracy": 0.8592661942071642
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 1,
+            "solver": "liblinear",
+            "tol": 0.001
+        },
+        "test_accuracy": 0.8592286838275797
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 1,
+            "solver": "liblinear",
+            "tol": 0.01
+        },
+        "test_accuracy": 0.8583772495950934
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 10,
+            "solver": "liblinear",
+            "tol": 0.0001
+        },
+        "test_accuracy": 0.8593530333051064
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 10,
+            "solver": "liblinear",
+            "tol": 0.001
+        },
+        "test_accuracy": 0.8585072513215986
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 10,
+            "solver": "liblinear",
+            "tol": 0.01
+        },
+        "test_accuracy": 0.8573007530851002
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 100,
+            "solver": "liblinear",
+            "tol": 0.0001
+        },
+        "test_accuracy": 0.8593458395336792
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 100,
+            "solver": "liblinear",
+            "tol": 0.001
+        },
+        "test_accuracy": 0.8587384796889003
+    },
+    {
+        "params": {
+            "penalty": "l1",
+            "C": 100,
+            "solver": "liblinear",
+            "tol": 0.01
+        },
+        "test_accuracy": 0.8578079139707152
+    }
+]
