@@ -1,4 +1,4 @@
-./data/*.csv
+./data
 ./product_recommendation_system/data
 ./product_recommendation_system/src/__pycache__
 ./product_recommendation_system/__pycache__
