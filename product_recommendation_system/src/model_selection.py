@@ -4,14 +4,14 @@ from sklearn.model_selection import StratifiedKFold, cross_val_score
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import make_scorer
 import pickle
+import logging
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score, f1_score
+from config import *
 
-
-
-
+logger=logging.getLogger(__name__)
 
 def model_selection(X, y, models, scoring='accuracy', k=10, sample_fraction=0.3):
     """
@@ -29,31 +29,37 @@ def model_selection(X, y, models, scoring='accuracy', k=10, sample_fraction=0.3)
     - best_model (model): The best performing model based on average k-fold score.
     - best_model_name (str): The name of the best performing model.
     """
-    X_sample, _, y_sample, _ = train_test_split(X, y, test_size=1-sample_fraction, stratify=y, random_state=42)
-    cv = StratifiedKFold(n_splits=k, shuffle=True, random_state=42)
+    try:
+        X_sample, _, y_sample, _ = train_test_split(X, y, test_size=1-sample_fraction, stratify=y)
+    except Exception as splitting_failed:
+        logger.error(f"Error while splitting the data : {str(splitting_failed)}")
+        return
+    cv = StratifiedKFold(n_splits=k, shuffle=True)
     
     best_model = None
     best_model_name = None
     best_score = -np.inf
-
-    for model_name, model in models.items():
-        print(f"Evaluating {model_name}...")
+    try:
+        for model_name, model in models.items():
+            logger.info(f"Evaluating {model_name}...")
         
-        start_time = time.time()
-        cv_scores = cross_val_score(model, X_sample, y_sample, cv=cv, scoring=scoring)
-        avg_score = np.mean(cv_scores)  # Get average score across all folds
-        end_time = time.time()
+            start_time = time.time()
+            cv_scores = cross_val_score(model, X_sample, y_sample, cv=cv, scoring=scoring)
+            avg_score = np.mean(cv_scores)  # Get average score across all folds
+            end_time = time.time()
         
-        print(f"{model_name}: Average {scoring} = {avg_score:.4f} (Time taken: {end_time - start_time:.2f} seconds)")
+            logger.info(f"{model_name}: Average {scoring} = {avg_score:.4f} (Time taken: {end_time - start_time:.2f} seconds)")
         
-        if avg_score > best_score:
-            best_score = avg_score
-            best_model = model
-            best_model_name = model_name
+            if avg_score > best_score:
+                best_score = avg_score
+                best_model = model
+                best_model_name = model_name
     
-    print(f"\nBest Model: {best_model_name} with Average {scoring}: {best_score:.4f}")
+        logger.info(f"\nBest Model: {best_model_name} with Average {scoring}: {best_score:.4f}")
     
-    return best_model, best_model_name
+        return best_model, best_model_name
+    except Exception as model_selection_error:
+        logger.error(f"Error while selcting the model {str(model_selection_error)}")
 
 
 def evaluate_model(X_train, X_test, y_train, y_test, models):
@@ -71,31 +77,33 @@ def evaluate_model(X_train, X_test, y_train, y_test, models):
     best_model = None
     best_model_name = ""
     best_f1_score_value = 0
-
-    for model_name, model in models.items():
-        model.fit(X_train, y_train)
-        y_pred = model.predict(X_test)
-        y_prob = model.predict_proba(X_test)[:, 1]
+    try:
+        for model_name, model in models.items():
+            model.fit(X_train, y_train)
+            y_pred = model.predict(X_test)
+            y_prob = model.predict_proba(X_test)[:, 1]
         
-        accuracy = accuracy_score(y_test, y_pred)
-        precision = precision_score(y_test, y_pred)
-        recall = recall_score(y_test, y_pred)
-        roc_auc = roc_auc_score(y_test, y_prob)
-        f1_score_value = f1_score(y_test, y_pred)
+            accuracy = accuracy_score(y_test, y_pred)
+            precision = precision_score(y_test, y_pred)
+            recall = recall_score(y_test, y_pred)
+            roc_auc = roc_auc_score(y_test, y_prob)
+            f1_score_value = f1_score(y_test, y_pred)
         
-        print(f"Model: {model_name}")
-        print(f"Accuracy: {accuracy:.4f}")
-        print(f"Precision: {precision:.4f}")
-        print(f"Recall: {recall:.4f}")
-        print(f"ROC-AUC: {roc_auc:.4f}")
-        print(f"F1-Score: {f1_score_value:.4f}")
-        print("-" * 40)
+            logger.info(f"Model: {model_name}")
+            logger.info(f"Accuracy: {accuracy:.4f}")
+            logger.info(f"Precision: {precision:.4f}")
+            logger.info(f"Recall: {recall:.4f}")
+            logger.info(f"ROC-AUC: {roc_auc:.4f}")
+            logger.info(f"F1-Score: {f1_score_value:.4f}")
+            logger.info("-" * 40)
         
-        if f1_score_value > best_f1_score_value:
-            best_f1_score_value = f1_score_value
-            best_model = model
-            best_model_name = model_name
+            if f1_score_value > best_f1_score_value:
+                best_f1_score_value = f1_score_value
+                best_model = model
+                best_model_name = model_name
+    except Exception as Evaluation_failed:
+        logger.error(f"Error while evaluating the model {str(Evaluation_failed)}")
     
-    print(f"\nBest Model: {best_model_name} with F1 score of {best_f1_score_value:.4f}")
+    logger.info(f"\nBest Model: {best_model_name} with F1 score of {best_f1_score_value:.4f}")
     
     return best_model, best_model_name
