@@ -226,55 +226,7 @@ def print_test_results(test_name, statistic, p_value, significance_level=0.05):
     print(f"P-value: {p_value:.4f}")
     print(f"Significant at {significance_level} level: {p_value < significance_level}")
 
-'''def run_statistical_tests(stratified_df: pd.DataFrame, col1:str, col2:str, significance_level=0.05):
-    """
-    Perform and print the results of ANOVA, Kruskal-Wallis, and Chi-Square tests.
-    """
 
-    test={}
-
-    if col1 not in stratified_df.columns or col2 not in stratified_df.columns:
-        raise ValueError(f"Columns {col1} or {col2} are missing from the DataFrame.")
-    
-    stratified_df_clean = stratified_df.dropna(subset=[col1, col2])
-
-    departments = stratified_df_clean['department'].unique()
-    days_by_dept = [stratified_df_clean[stratified_df_clean['department'] == dept][col2] 
-                    for dept in departments]
-
-    f_stat, p_val = f_oneway(*days_by_dept)
-    test["ANOVA"] = {
-        "test_name": "ANOVA Test: Days Since Prior Order across Departments",
-        "statistic": f_stat,
-        "p_value": p_val,
-        "significant": p_val < significance_level
-    }
-    h_stat, p_val = scipy.stats.kruskal(*days_by_dept)
-    f_stat, p_val = f_oneway(*days_by_dept)
-    test["KRUSKAL"] = {
-        "test_name": "KRUSKAL Test: Days Since Prior Order across Departments",
-        "statistic": f_stat,
-        "p_value": p_val,
-        "significant": p_val < significance_level
-    }
-
-    dept_reorder_counts = pd.crosstab(stratified_df_clean['department'], stratified_df_clean['reordered'])
-    
-    chi2, p_value, dof, expected = chi2_contingency(dept_reorder_counts)
-    test["Chi-Square"] = {
-        "test_name": "Chi-square Test: Department vs Reordered",
-        "statistic": chi2,
-        "p_value": p_value,
-        "degrees_of_freedom": dof,
-        "expected_frequencies": expected,
-        "significant": p_value < significance_level
-        
-    }
-    for test_name, result in test.items():
-        print_test_results(result["test_name"], result["statistic"], result["p_value"], significance_level)
-
-    return test
-'''
 def run_statistical_tests(stratified_df: pd.DataFrame, col1: str, col2: str, significance_level=0.05, json_file_path=None):
     """
     Perform and print the results of ANOVA, Kruskal-Wallis, and Chi-Square tests.

@@ -1,7 +1,7 @@
-log/
 data/*.csv
 product_recommendation_system/src/__pycache__
 product_recommendation_system/__pycache__
 purchase_pattern_analysis/src/__pycache__
 purchase_pattern_analysis/__pycache__
 purchase_pattern_analysis/log/*.log
+product_recommendation_system/log/*.log
