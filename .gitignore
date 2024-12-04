@@ -5,3 +5,6 @@ product_recommendation_system/__pycache__
 purchase_pattern_analysis/src/__pycache__
 purchase_pattern_analysis/__pycache__
 purchase_pattern_analysis/log/*.log
+purchase_pattern_analysis/data/orders.csv
+purchase_pattern_analysis/results/cluster_results.json
+purchase_pattern_analysis/data/order_products.csv
