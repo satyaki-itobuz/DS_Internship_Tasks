@@ -16,7 +16,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.StreamHandler(),
-        logging.FileHandler('feature_engineering.log')
+        logging.FileHandler('/Users/itobuz/Desktop/project/DS_Internship_Tasks/product_recommendation_system/log/feature_engineering.log')
     ]
 )
 logger = logging.getLogger(__name__)
