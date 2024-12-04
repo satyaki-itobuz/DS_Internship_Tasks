@@ -84,7 +84,7 @@ def create_load_study() -> optuna.study:
     try:
         optuna.logging.get_logger("optuna").addHandler(logging.StreamHandler(sys.stdout))
         study_name = "purchase_hp_tuning"
-        storage_name = "sqlite:///results/{}.db".format(study_name)
+        storage_name = "sqlite:///db/{}.db".format(study_name)
 
         study = optuna.create_study(study_name = study_name, storage=storage_name, load_if_exists=True, direction='maximize')
         return study

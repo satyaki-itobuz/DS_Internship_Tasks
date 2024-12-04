@@ -1,9 +1,9 @@
 # DEPENDENCIES
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
 from sklearn.datasets import make_classification
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score
 import pandas as pd
 import warnings
 
@@ -14,7 +14,7 @@ warnings.filterwarnings(action = 'ignore')
 # REQUIRED FUNCTIONAITIES
 def load_and_split_data(file_path, target_column, test_size=0.2, random_state=42):
     """
-    Loads a dataset from a CSV file, preprocesses it, and splits it into train and test sets.
+    Loads a dataset from a CSV file, preprocesses it, and splits it into train and test sets
     """
     # Step 1: Load the dataset
     data = pd.read_csv(file_path)
@@ -35,7 +35,7 @@ def load_and_split_data(file_path, target_column, test_size=0.2, random_state=42
 
 def grid_search(X_train, X_test, y_train, y_test, param_grid):
     """
-    Performs grid search for a single set of parameters and evaluates the model.
+    Performs grid search for a single set of parameters and evaluates the model
     """
     model = LogisticRegression(**param_grid)
     model.fit(X_train, y_train)

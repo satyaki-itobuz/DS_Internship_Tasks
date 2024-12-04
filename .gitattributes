@@ -1,0 +1,5 @@
+*.csv filter=lfs diff=lfs merge=lfs -text
+*.json filter=lfs diff=lfs merge=lfs -text
+purchase_pattern_analysis/data/orders.csv filter=lfs diff=lfs merge=lfs -text
+purchase_pattern_analysis/data/order_products.csv filter=lfs diff=lfs merge=lfs -text
+purchase_pattern_analysis/results/cluster_results.json filter=lfs diff=lfs merge=lfs -text

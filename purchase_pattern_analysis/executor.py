@@ -9,7 +9,7 @@ from config import PRODUCTS_CSV
 from config import ORDER_PRODUCTS_CSV
 from config import AISLE_CSV
 # from src.market_basket import market_basket_analysis
-from src.Customer_Segmentation import customer_segmentation_analysis
+from src.customer_segmentation import customer_segmentation_analysis
 
 # Setup logging 
 # Create log filename with timestamp

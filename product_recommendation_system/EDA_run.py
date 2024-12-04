@@ -22,11 +22,11 @@ logging.basicConfig(
 
 # loading data
 logging.info("Loading data")
-aisles=load_data(aisles)
-orders=load_data(order)
-order_pro=load_data(order_products)
-pro=load_data(products)
-dept=load_data(departments)
+aisles=load_data(AISLES)
+orders=load_data(ORDER)
+order_pro=load_data(ORDER_PRODUCTS)
+pro=load_data(PRODUCTS)
+dept=load_data(DEPARTMENTS)
 
 # merging data 
 logging.info("Merging data")
@@ -45,7 +45,7 @@ df=missing_values(df=df,col='days_since_prior_order')
 
 # stratified sampling 
 logging.info("Sampling performed")
-df=stratified_sample(df=df,stratify_col='product_name',frac=frac)
+df=stratified_sample(df=df,stratify_col='product_name',frac=STRATIFICATION_FRACTION)
 
 # histogram of numerical columns 
 logging.info("Histogram of numerical columns")
@@ -129,7 +129,7 @@ plot_correlation_matrix(df, numerical_cols)
 
 # statistical tests 
 logging.info("statistical tests")
-result = run_statistical_tests(stratified_df, col1='department', col2='days_since_prior_order',json_file_path=json_path)
+result = run_statistical_tests(stratified_df, col1='department', col2='days_since_prior_order',json_file_path=EDA_TEST_RESULTS)
 
 
 
