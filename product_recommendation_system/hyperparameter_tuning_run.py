@@ -4,17 +4,17 @@ from config import hyperparameter_tuning_total_results
 from src.supervised_hyperparameter import grid_search
 from config import hyperparameter_tuning_top5_results
 from config import stratified_sample_data
-from config import data_file_path
-from config import target_column
-from config import random_state
+from config import STRATIFIED_DATA
+from config import TARGET_COLUMN
+from config import RANDOM_STATE
 import pandas as pd
 import itertools
 import json
 
 # Load and split the data
-X_train, X_test, y_train, y_test = load_and_split_data(file_path     = data_file_path, 
-                                                       target_column = target_column, 
-                                                       random_state  = random_state)
+X_train, X_test, y_train, y_test = load_and_split_data(file_path     = STRTIFIED_DATA, 
+                                                       target_column = TARGET_COLUMN, 
+                                                       random_state  = RANDOM_STATE)
   
 # Define the hyperparameter values
 C_values = [0.01, 0.1, 1, 10, 100]
@@ -48,7 +48,7 @@ for C, solver, tol in param_combinations:
         results.append(result)
 
 # Writing top-5 results in a json file
-with open(file = hyperparameter_tuning_total_results, mode = 'w') as file_pointer:
+with open(file = HYPERPARAMETER_TUNING_TOTAL_RESULTS, mode = 'w') as file_pointer:
     json.dump(obj    = results, 
               fp     = file_pointer,
               indent = 4)
@@ -66,6 +66,6 @@ for idx, res in enumerate(sorted_results[:5]):
 
 top5_result_dataframe = pd.DataFrame(data = sorted_results[:5])
 # Dump top5 results in a CSV table
-top5_result_dataframe.to_csv(path_or_buf = hyperparameter_tuning_top5_results, 
+top5_result_dataframe.to_csv(path_or_buf = HYPERPARAMETER_TUNING_TOP5_RESULTS., 
                              index       = False)
 
