@@ -1,17 +1,23 @@
 import logging
 import pandas as pd
 import os
+import time
 from src.feature_engineering import feature_engineering
 
-# Configure logging for the main script
+# Define the log file path dynamically based on the current time (or any other unique identifier)
+log_file_path = '/Users/itobuz/project/DS_Internship_Tasks/product_recommendation_system/feature_engineering_{}.log'.format(int(time.time()))
+
+# Set up logging with the new log file
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler('/Users/itobuz/Desktop/project/DS_Internship_Tasks/product_recommendation_system/log/feature_engineering.log')
-    ]
-)
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.StreamHandler(),  # Log to console
+            logging.FileHandler(log_file_path)  # Log to the dynamically generated file
+        ]
+    ) 
+
+
 logger = logging.getLogger(__name__)
 
 def main():
@@ -22,7 +28,7 @@ def main():
         logger.info("Starting feature.py script.")
         
         # Load the dataset
-        dataset_path = '/Users/itobuz/Desktop/project/DS_Internship_Tasks/product_recommendation_system/data/product_dataset.csv'
+        dataset_path = '/Users/itobuz/project/DS_Internship_Tasks/product_recommendation_system/data/product_dataset.csv'
         logger.info(f"Loading the dataset from '{dataset_path}'.")
         df = pd.read_csv(dataset_path)
         logger.info(f"Dataset loaded successfully. Shape: {df.shape}")
