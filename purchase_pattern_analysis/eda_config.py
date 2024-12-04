@@ -1,6 +1,0 @@
-PRODUCTS= 'data/products.csv'
-ORDERS= 'results/orders_processed.csv'
-ORDER_PRODUCTS= 'data/order_products.csv'
-AISLES= 'data/aisles.csv'
-DATA= 'results/encoded_data.csv'
-ORDERS_UNCLEAN= 'data/orders.csv'

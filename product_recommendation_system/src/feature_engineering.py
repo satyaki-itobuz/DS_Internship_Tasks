@@ -9,16 +9,23 @@ from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, classifi
 import seaborn as sns
 import matplotlib.pyplot as plt
 import pickle
+import time
 
 # Configure logging
+# Define the log file path dynamically based on the current time (or any other unique identifier)
+log_file_path = '/Users/itobuz/project/DS_Internship_Tasks/product_recommendation_system/feature_engineering_{}.log'.format(int(time.time()))
+
+# Set up logging with the new log file
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler('feature_engineering.log')
-    ]
-)
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s',
+        handlers=[
+            logging.StreamHandler(),  # Log to console
+            logging.FileHandler(log_file_path)  # Log to the dynamically generated file
+        ]
+    ) 
+
+
 logger = logging.getLogger(__name__)
 
 def feature_engineering(df):
