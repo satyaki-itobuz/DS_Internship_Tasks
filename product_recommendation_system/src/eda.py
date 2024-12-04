@@ -2,114 +2,157 @@ import matplotlib.pyplot as plt
 import seaborn as sns 
 import pandas as pd
 import numpy as np
-from scipy.stats import f_oneway, kruskal, chi2_contingency
+from scipy.stats import f_oneway
+from scipy.stats import kruskal
+from scipy.stats import chi2_contingency
 import json
-from config import *
+from config import STRATIFICATION_FRACTION
+from config import EDA_PLOTS_LOCATION 
+from config import RANDOM_STATE
+import logging
+
+logger=logging.getLogger(__name__)
 
 def stratified_sample(df:pd.DataFrame, stratify_col:str, frac:float) -> pd.DataFrame:
     """
     Applying Stratified sampling on the dataset
     """
-    stratified_df = df.groupby(stratify_col, group_keys=False).apply(lambda x: x.sample(frac=frac, random_state=42))
-    stratified_df = stratified_df.reset_index(drop=True)
-    return stratified_df
+    try:
+        stratified_df = df.groupby(stratify_col, group_keys=False).apply(lambda x: x.sample(frac=STRATIFICATION_FRACTION, random_state=RANDOM_STATE))
+        stratified_df = stratified_df.reset_index(drop=True)
+        return stratified_df
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 def plot_histogram(df:pd.DataFrame,col:str,save:bool):
     """
     Histogram plot of a column in the dataset
     """
-    df[col].hist(bins=20)
-    plt.title(f"histogram of {col}")
-    plt.xlabel(col)
-    plt.ylabel('count')
-    if save:
-        plt.savefig(f'{file_loc}hist_{col}.png')
+    try:
+        df[col].hist(bins=20)
+        plt.title(f"histogram of {col}")
+        plt.xlabel(col)
+        plt.ylabel('count')
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}hist_{col}.png')
     #plt.show()
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 def plot_boxplot(df:pd.DataFrame,col:str,save:bool):
     """
     Boxplot of a column in the dataset
     """
-    sns.boxplot(data=df,x=col)
-    plt.title(f"boxplot of {col}")
-    plt.xlabel(col)
-    plt.ylabel('frequency')
-    if save:
-        plt.savefig(f'{file_loc}box_{col}.png')
+    try:
+        sns.boxplot(data=df,x=col)
+        plt.title(f"boxplot of {col}")
+        plt.xlabel(col)
+        plt.ylabel('frequency')
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}box_{col}.png')
     #plt.show()
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 def skew_kurtosis(df:pd.DataFrame,col:str) -> list:
     """
     Finding Skewness and kurtosis of the dataset
     """
-    skew=df[col].skew()
-    kurtosis=df[col].kurtosis()
-    res=[skew,kurtosis]
+    try:
+        skew=df[col].skew()
+        kurtosis=df[col].kurtosis()
+        res=[skew,kurtosis]
 
-    return res
+        return res
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 def pie_chart(df:pd.DataFrame,col:str='reordered',save:bool=True):
     """
     Pie chart of column in the dataset 
     """
-    plt.figure(figsize=(12,8))
-    df_counts=df[col].value_counts()
-    plt.pie(df_counts,labels=df_counts.index,autopct="%1.1f%%")
-    plt.title(f'{col} distribution (%)')
-    plt.axis('equal')
-    if save:
-        plt.savefig(f'{file_loc}pie_{col}.png')
-    #plt.show()
+    try:
+        plt.figure(figsize=(12,8))
+        df_counts=df[col].value_counts()
+        plt.pie(df_counts,labels=df_counts.index,autopct="%1.1f%%")
+        plt.title(f'{col} distribution (%)')
+        plt.axis('equal')
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}pie_{col}.png')
+        #plt.show()
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 def bar_plot(df:pd.DataFrame,col:str,save:bool=True):
     """
     Bar chart of column in the dataset 
     """
-    df_counts=df[col].value_counts()
-    df_plot=df_counts.plot(kind='bar')
-    plt.xlabel(f'{col}')
-    plt.ylabel('count')
-    plt.xticks(rotation=45)
-    if save:
-        plt.savefig(f'{file_loc}bar_{col}.png')
-    #plt.show()
+    try:
+        df_counts=df[col].value_counts()
+        df_plot=df_counts.plot(kind='bar')
+        plt.xlabel(f'{col}')
+        plt.ylabel('count')
+        plt.xticks(rotation=45)
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}bar_{col}.png')
+        #plt.show()
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 def box_plot_bivariate(df:pd.DataFrame,col1:str,col2:str,save:bool=True):
     """
     Box plot for bivariate analysis
     """
-    plt.figure(figsize=(10,20))
-    sns.boxplot(data=df,x=col1,y=col2)
-    plt.xticks(rotation=45)
-    if save:
-        plt.savefig(f'{file_loc}box_bivariate_{col1}.png')
-    #plt.show()
+    try:
+        plt.figure(figsize=(10,20))
+        sns.boxplot(data=df,x=col1,y=col2)
+        plt.xticks(rotation=45)
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}box_bivariate_{col1}.png')
+        #plt.show()
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 def cross_tab_heatmap(df:pd.DataFrame,col1:str,col2:str,save:bool):
     """
     Cross tab and heatmap for bivariate analysis
     """
-    plt.figure(figsize=(15, 8))
-    new_data=pd.crosstab(df[col1],df[col2])
-    sns.heatmap(new_data,cmap='viridis',annot=True,fmt='d')
-    plt.title(f'{col1} vs {col2}')
-    plt.xlabel(f'{col2}')
-    plt.ylabel(f'{col1}')
-    if save:
-        plt.savefig(f'{file_loc}cross_heatmap{col1}.png')
-    #plt.show()
+    try:
+        plt.figure(figsize=(15, 8))
+        new_data=pd.crosstab(df[col1],df[col2])
+        sns.heatmap(new_data,cmap='viridis',annot=True,fmt='d')
+        plt.title(f'{col1} vs {col2}')
+        plt.xlabel(f'{col2}')
+        plt.ylabel(f'{col1}')
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}cross_heatmap{col1}.png')
+        #plt.show()
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 def countplot(df:pd.DataFrame,col:str,save:bool=True):
     """
     Countplot of a column
     """
-    plt.figure(figsize=(10, 6))
-    sns.countplot(data=df, x=col)
-    plt.ylabel('Count')
-    plt.xticks(rotation=45)
-    if save:
-        plt.savefig(f'{file_loc}count_plot_for_binning.png')
-    #plt.show()
+    try:
+        plt.figure(figsize=(10, 6))
+        sns.countplot(data=df, x=col)
+        plt.ylabel('Count')
+        plt.xticks(rotation=45)
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}count_plot_for_binning.png')
+        #plt.show()
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 def assign_time_period(hour):
     """
@@ -203,18 +246,22 @@ def analyze_reorder_probability(df: pd.DataFrame, feature1, feature2, threshold=
     """
     Finding reorder probability and heatmap together 
     """
-    plt.figure(figsize=(12,10))
-    pivot = df.groupby([feature1, feature2])['reordered'].agg(['mean', 'count']).reset_index()
-    pivot = pivot[pivot['count'] > threshold]  
-    
-    pivot_table = pivot.pivot(index=feature1, columns=feature2, values='mean')
-    sns.heatmap(pivot_table, cmap='YlOrRd', annot=True, fmt='.2f')
-    plt.title(f'Reorder Probability: {feature1} vs {feature2}')
-    if save:
-        plt.savefig(f'{file_loc}analyze_{feature1}.png')
-    #plt.show()
-    
-    return pivot_table
+    try:
+        plt.figure(figsize=(12,10))
+        pivot = df.groupby([feature1, feature2])['reordered'].agg(['mean', 'count']).reset_index()
+        pivot = pivot[pivot['count'] > threshold]  
+        
+        pivot_table = pivot.pivot(index=feature1, columns=feature2, values='mean')
+        sns.heatmap(pivot_table, cmap='YlOrRd', annot=True, fmt='.2f')
+        plt.title(f'Reorder Probability: {feature1} vs {feature2}')
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}analyze_{feature1}.png')
+        #plt.show()
+        
+        return pivot_table
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 
 def print_test_results(test_name, statistic, p_value, significance_level=0.05):
@@ -302,69 +349,84 @@ def plot_reorder_rate_heatmap(df: pd.DataFrame, hour_col: str = 'order_hour_of_d
     """
     Creates a heatmap for reorder rates by hour and day of the week
     """
-    pivot_table = df.pivot_table(
-        values=reorder_col,
-        index=hour_col,
-        columns=dow_col,
-        aggfunc='mean'
-    )
-    plt.figure(figsize=figsize)
-    sns.heatmap(pivot_table, cmap='viridis', annot=True, fmt='.2f')
-    plt.title('Reorder Rate by Hour and Day of Week')
-    plt.xlabel('Day of Week')
-    plt.ylabel('Hour of Day')
-    if save:
-        plt.savefig(f'{file_loc}rate_heatmap_{hour_col}.png')
-    #plt.show()
+    try:
+        pivot_table = df.pivot_table(
+            values=reorder_col,
+            index=hour_col,
+            columns=dow_col,
+            aggfunc='mean'
+        )
+        plt.figure(figsize=figsize)
+        sns.heatmap(pivot_table, cmap='viridis', annot=True, fmt='.2f')
+        plt.title('Reorder Rate by Hour and Day of Week')
+        plt.xlabel('Day of Week')
+        plt.ylabel('Hour of Day')
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}rate_heatmap_{hour_col}.png')
+        #plt.show()
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 
 def plot_mean_add_to_cart_order_by_hour(df: pd.DataFrame, hour_col: str = 'order_hour_of_day', cart_order_col: str = 'add_to_cart_order', figsize: tuple = (15, 6),save:bool=True):
     """
     Plots the mean add_to_cart_order by hour of the day
     """
-    mean_cart_order = df.groupby(hour_col)[cart_order_col].mean()
+    try:
+        mean_cart_order = df.groupby(hour_col)[cart_order_col].mean()
 
-    plt.figure(figsize=figsize)
-    mean_cart_order.plot(kind='line', marker='o')
-    plt.title('Average Add to Cart Order by Hour of Day')
-    plt.xlabel('Hour of Day')
-    plt.ylabel('Mean Add to Cart Order')
-    plt.grid(True)
-    plt.tight_layout()
-    if save:
-        plt.savefig(f'{file_loc}mean_add_{hour_col}.png')
-    #plt.show()
+        plt.figure(figsize=figsize)
+        mean_cart_order.plot(kind='line', marker='o')
+        plt.title('Average Add to Cart Order by Hour of Day')
+        plt.xlabel('Hour of Day')
+        plt.ylabel('Mean Add to Cart Order')
+        plt.grid(True)
+        plt.tight_layout()
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}mean_add_{hour_col}.png')
+        #plt.show()
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 
 def plot_reorder_rate_by_category(df: pd.DataFrame, category_col: str = 'department', target_col: str = 'reordered', colors: list = ['#1f77b4'], figsize: tuple = (15, 6),save:bool=True):
     """
     Creates a bar plot showing the reorder rate by category (e.g., department)
     """
-
-    reorder_rate = pd.crosstab(df[category_col], df[target_col], normalize='index') * 100
-    
-    plt.figure(figsize=figsize)
-    reorder_rate[1].sort_values(ascending=False).plot(kind='bar', color=colors[0])
-    plt.title(f'Reorder Rate by {category_col.capitalize()}')
-    plt.xlabel(category_col.capitalize())
-    plt.ylabel('Reorder Rate (%)')
-    plt.xticks(rotation=45, ha='right')
-    plt.tight_layout()
-    if save:
-        plt.savefig(f'{file_loc}reorder_rate_{target_col}.png')
-    #plt.show()
+    try:
+        reorder_rate = pd.crosstab(df[category_col], df[target_col], normalize='index') * 100
+        
+        plt.figure(figsize=figsize)
+        reorder_rate[1].sort_values(ascending=False).plot(kind='bar', color=colors[0])
+        plt.title(f'Reorder Rate by {category_col.capitalize()}')
+        plt.xlabel(category_col.capitalize())
+        plt.ylabel('Reorder Rate (%)')
+        plt.xticks(rotation=45, ha='right')
+        plt.tight_layout()
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}reorder_rate_{target_col}.png')
+        #plt.show()
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
 
 
 def plot_correlation_matrix(df: pd.DataFrame, numerical_cols: list, figsize: tuple = (10, 8), cmap: str = 'coolwarm',save:bool=True):
     """
     Plots a heatmap for the correlation matrix of numerical variables
     """
-    correlation_matrix = df[numerical_cols].corr()
-    
-    plt.figure(figsize=figsize)
-    sns.heatmap(correlation_matrix, annot=True, cmap=cmap, center=0)
-    plt.title('Correlation Matrix of Numerical Variables')
-    plt.tight_layout()
-    if save:
-        plt.savefig(f'{file_loc}correlation_matrix{numerical_cols}.png')
-    #plt.show()
+    try:
+        correlation_matrix = df[numerical_cols].corr()
+        
+        plt.figure(figsize=figsize)
+        sns.heatmap(correlation_matrix, annot=True, cmap=cmap, center=0)
+        plt.title('Correlation Matrix of Numerical Variables')
+        plt.tight_layout()
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}correlation_matrix{numerical_cols}.png')
+        #plt.show()
+    except Exception as FileNotFoundError:
+        logging.error("An error occured")
+        return repr(FileNotFoundError)
