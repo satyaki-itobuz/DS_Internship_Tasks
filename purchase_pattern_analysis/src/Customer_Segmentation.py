@@ -1,11 +1,16 @@
 # DEPENDENCIES
 import pandas as pd
+import logging
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
 from sklearn.model_selection import train_test_split
+
+
+#GET LOGGER 
+logger = logging.getLogger(__name__)
 
 
 def customer_segmentation_analysis(merged_data:pd.DataFrame, aisle_data:pd.DataFrame) -> dict :
@@ -30,31 +35,42 @@ def customer_segmentation_analysis(merged_data:pd.DataFrame, aisle_data:pd.DataF
     """
     # Type Checking 
     if not isinstance(merged_data, pd.DataFrame):
+        logger.warning((f"Expected a pandas DataFrame object, got : {type(merged_data)} instead"))
         return repr(TypeError(f"Expected a pandas DataFrame object, got : {type(merged_data)} instead"))
 
     if not isinstance(aisle_data, pd.DataFrame):
+        logger.warning((f"Expected a pandas DataFrame object, got : {type(aisle_data)} instead"))
         return repr(TypeError(f"Expected a pandas DataFrame object, got : {type(aisle_data)} instead"))
 
     # Data Validation
     if (len(merged_data) < 2):
+        logger.warning(f"InsufficientData : As the input products_data if of length : {len(merged_data)}, no further processing possible")
         return repr(f"InsufficientData : As the input products_data if of length : {len(merged_data)}, no further processing possible")
 
     if (len(aisle_data) < 2):
+        logger.warning(f"InsufficientData : As the input products_data if of length : {len(aisle_data)}, no further processing possible")
         return repr(f"InsufficientData : As the input products_data if of length : {len(aisle_data)}, no further processing possible")
 
     try:
         train_df, test_df = train_test_split(merged_data, test_size=0.99, stratify=merged_data['user_id'], random_state=42)
 
         # Display the shape of the training and testing sets
-        print(f"Training set size: {train_df.shape[0]} rows")
-        print(f"Testing set size: {test_df.shape[0]} rows")
+        logger.info(f"Training set size: {train_df.shape[0]} rows")
+        # print(f"Training set size: {train_df.shape[0]} rows")
+        logger.info(f"Testing set size: {test_df.shape[0]} rows")
+        # print(f"Testing set size: {test_df.shape[0]} rows")
 
         # Optional: Check the distribution of user_id in both sets
-        print("User ID distribution in training set:")
-        print(train_df['user_id'].value_counts(normalize=True))
+        logger.info("User ID distribution in training set")
+        # print("User ID distribution in training set:")
+        logger.info(train_df['user_id'].value_counts(normalize=True))
+        # print(train_df['user_id'].value_counts(normalize=True))
 
-        print("User ID distribution in testing set:")
-        print(test_df['user_id'].value_counts(normalize=True))
+
+        #logger.info("User ID distribution in training set:")
+        # print("User ID distribution in testing set:")
+        # logger.info(test_df['user_id'].value_counts(normalize=True))
+        # print(test_df['user_id'].value_counts(normalize=True))
         # Convert the DataFrame to a dictionary with columns as keys
         df_dict = aisle_data.to_dict(orient='dict')['aisle']
 
@@ -71,7 +87,7 @@ def customer_segmentation_analysis(merged_data:pd.DataFrame, aisle_data:pd.DataF
         pca = PCA(n_components=10)
         df_pca = pca.fit_transform(df)
         df_pca = pd.DataFrame(df_pca)
-        df_pca.head()
+        # df_pca.head()
 
         Sum_of_squared_distances = []
         K = range(1,10)
@@ -92,7 +108,8 @@ def customer_segmentation_analysis(merged_data:pd.DataFrame, aisle_data:pd.DataF
         clusterer = KMeans(n_clusters=5,random_state=42).fit(df_pca)
         centers = clusterer.cluster_centers_
         c_preds = clusterer.predict(df_pca)
-        print(centers)
+        # logger.info(centers)
+        # print(centers)
 
         # Taking PC-1 and PC-2 for further analysis
         temp_df = df_pca.iloc[:, 0:2]
@@ -143,7 +160,8 @@ def customer_segmentation_analysis(merged_data:pd.DataFrame, aisle_data:pd.DataF
                 'cluster-5' : cluster5}
 
     except Exception as CustomerSegmentationAnalysisError:
-        #return (f"CustomerSegmentationAnalysisError: While performing customer segmentation analysis, got error: {repr(CustomerSegmentationAnalysisError)}")
+        logger.error(f"CustomerSegmentationAnalysisError: While performing customer segmentation analysis, got error: {repr(CustomerSegmentationAnalysisError)}")
+        return (f"CustomerSegmentationAnalysisError: While performing customer segmentation analysis, got error: {repr(CustomerSegmentationAnalysisError)}")
         raise
 
 

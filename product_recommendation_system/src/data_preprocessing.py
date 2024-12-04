@@ -38,7 +38,14 @@ def split_data(X, y, test_size=0.2, random_state=42):
     Returns:
     - X_train, X_test, y_train, y_test
     """
+<<<<<<< HEAD
     try:
         return train_test_split(X, y, test_size=test_size, stratify=y, random_state=random_state)
     except Exception as Splitting_error:
         logger.error(f"Error in splitting the data {str(Splitting_error)}")
+=======
+    return train_test_split(X, y, test_size=test_size, stratify=y, random_state=random_state)
+
+
+
+>>>>>>> 618fc7d81e9a1ed3d0795a7ae63d1ca3427fb78f
