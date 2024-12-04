@@ -1,20 +1,19 @@
+# DATA PATHS
+ORDER                               = "../data/orders.csv"
+AISLES                              = "../data/aisles.csv"
+ORDER_PRODUCTS                      = "../data/order_products.csv"
+PRODUCTS                            = "../data/products.csv"
+DEPARTMENTS                         = "../data/departments.csv"
+STRATIFIED_DATA                     = "../data/stratified_data.csv"
 
-order          = "../data/orders.csv"
-aisles         = "../data/aisles.csv"
-order_products = "../data/order_products.csv"
-products       = "../data/products.csv"
-departments    = "../data/departments.csv"
-full_path      = "data/filename.csv"
-frac           = 0.1
-random_state   = 42
-target_column  = 'reordered'
-data_file_path = 'data/hyperparameter_tuning_dataset.csv'
+# SOME GLOBAL PARAMETERS
+STRATIFICATION_FRACTION             = 0.1
+RANDOM_STATE                        = 42
+TARGET_COLUMN                       = 'reordered'
 
-json_path      = './plots/EDA/test_results.json'
-
-file_loc       = "./plots/EDA/"
-final_model_path = 'best_model.pkl'
-
-stratified_sample_data = ''
-hyperparameter_tuning_total_results = 'results/hyperparameter_tuning_total_rersults.json'
-hyperparameter_tuning_top5_results  = 'results/hyperparameter_tuning_top5_rersults.csv'
+# RESULTS LOCATIONS FOR ALL TASKS
+EDA_TEST_RESULTS                    = './results/EDA/test_results.json'
+EDA_PLOTS_LOCATION                  = "./plots/EDA/"
+FINAL_MODEL_PATH                    = './models/best_model.pkl'
+HYPERPARAMETER_TUNING_TOTAL_RESULTS = './results/hyperparameter_tuning_total_rersults.json'
+HYPERPARAMETER_TUNING_TOP5_RESULTS  = './results/hyperparameter_tuning_top5_rersults.csv'
