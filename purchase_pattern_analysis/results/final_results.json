@@ -1,0 +1,7 @@
+{
+    "model": "LGBMClassifier(n_jobs=-1, verbose=-1)",
+    "accuracy_score": 0.8244693150811636,
+    "precision_score": 0.8655902939295267,
+    "Recall_score": 0.8310742028201695,
+    "f1 score": 0.8479811593564383
+}

@@ -18,4 +18,8 @@ EDA_PLOTS_LOCATION               = "./plots/EDA/"
 BUNDLES_LOCATION                 = "./results/product_bundles.csv"
 CLUSTER_LOCATION                 = "./results/cluster_results.json"
 
+FINAL_RESULTS_LOCATION           = "./results/final_results.json"
+CONFUSION_MATRIX_LOCATION        = "./plots/confusion_matrix.png"
+ROC_AUC_LOCATION                 = "/plots/ROC-AUC.png"
+
 HYPERPARAMETER_TUNING_DB_RESULTS = "./db/purchase_hp_tuning.db"
