@@ -1,7 +1,7 @@
 import os
 import logging
 from datetime import datetime
-from config import PREPROCESSED_CSV
+from config import PREPROCESSED_CSV, HYPERPARAMETER_TUNING_DB_RESULTS
 from src.hyperparameter_tuning import load_dataset, data_split, objective_function
 from src.hyperparameter_tuning import create_load_study, hyperparameter_tuning, best_trial
 
@@ -26,7 +26,7 @@ try:
     X_train, X_test, y_train, y_test = data_split(data)
     logging.info("Data split into training and testing sets.")
         
-    study = create_load_study()
+    study = create_load_study(HYPERPARAMETER_TUNING_DB_RESULTS)
     logging.info("Study created/loaded.")
         
     study = hyperparameter_tuning(1,study,X_train, X_test, y_train, y_test)

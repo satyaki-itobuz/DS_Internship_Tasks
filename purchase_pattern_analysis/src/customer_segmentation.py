@@ -2,6 +2,7 @@
 import pandas as pd
 import logging
 import seaborn as sns
+from config import *
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
@@ -52,7 +53,7 @@ def customer_segmentation_analysis(merged_data:pd.DataFrame, aisle_data:pd.DataF
         return repr(f"InsufficientData : As the input products_data if of length : {len(aisle_data)}, no further processing possible")
 
     try:
-        train_df, test_df = train_test_split(merged_data, test_size=0.99, stratify=merged_data['user_id'], random_state=42)
+        train_df, test_df = train_test_split(merged_data, test_size=0.99, stratify=merged_data['user_id'], random_state=RANDOM_STATE.config)
 
         # Display the shape of the training and testing sets
         logger.info(f"Training set size: {train_df.shape[0]} rows")
