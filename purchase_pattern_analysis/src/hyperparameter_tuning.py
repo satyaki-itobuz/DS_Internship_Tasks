@@ -75,7 +75,7 @@ def objective_function(trial:optuna.trial,X_train, X_test, y_train, y_test) -> f
     return f1_score(y_test,y_pred)
 
 # Create Optuna study
-def create_load_study() -> optuna.study:
+def create_load_study(path:str) -> optuna.study:
     '''
     Creates a study if no study previously created or loads one for hyperparameter tuning
     Returns:
@@ -84,7 +84,7 @@ def create_load_study() -> optuna.study:
     try:
         optuna.logging.get_logger("optuna").addHandler(logging.StreamHandler(sys.stdout))
         study_name = "purchase_hp_tuning"
-        storage_name = "sqlite:///db/{}.db".format(study_name)
+        storage_name = "sqlite:///{}".format(path)
 
         study = optuna.create_study(study_name = study_name, storage=storage_name, load_if_exists=True, direction='maximize')
         return study
