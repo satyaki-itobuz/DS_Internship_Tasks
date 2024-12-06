@@ -17,5 +17,6 @@ FINAL_MODEL_PATH                 = "./models/best_model.pkl"
 EDA_PLOTS_LOCATION               = "./plots/EDA/"
 BUNDLES_LOCATION                 = "./results/product_bundles.csv"
 CLUSTER_LOCATION                 = "./results/cluster_results.json"
+FINAL_REPORT                     = "./reports/Puchase_Pattern_Analysis_Report.pdf"
 
 HYPERPARAMETER_TUNING_DB_RESULTS = "./db/purchase_hp_tuning.db"
