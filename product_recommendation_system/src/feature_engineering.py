@@ -94,19 +94,17 @@ def feature_engineering(df):
         logger.info("Splitting the data into training, testing, and validation sets.")
         X = df.drop(columns=['reordered'])
         y = df['reordered']
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-        X_test_final, X_val, y_test_final, y_val = train_test_split(X_test, y_test, test_size=0.15, random_state=42)
 
         # Logistic Regression
         logger.info("Training Logistic Regression model.")
-        log_reg = LogisticRegression(max_iter=500, solver='lbfgs')
-        log_reg.fit(X_train, y_train)
+        log_reg = LogisticRegression(solver='liblinear')
+        log_reg.fit(X, y)
 
         # Model Evaluation
         logger.info("Evaluating the model on the test set.")
-        y_pred = log_reg.predict(X_test_final)
-        accuracy = accuracy_score(y_test_final, y_pred)
-        f1 = f1_score(y_test_final, y_pred)
+        y_pred = log_reg.predict(X)
+        accuracy = accuracy_score(y, y_pred)
+        f1 = f1_score(y, y_pred)
         logger.info(f"Model Accuracy: {accuracy:.4f}")
         logger.info(f"Model F1 Score: {f1:.4f}")
 
@@ -115,14 +113,9 @@ def feature_engineering(df):
         importance = np.abs(log_reg.coef_[0])
         importance_df = pd.DataFrame({'Feature': X.columns, 'Importance': importance}).sort_values(by='Importance', ascending=False)
 
-        # Saving the Model
-        logger.info("Saving the trained model.")
-        with open('model.pkl', 'wb') as f:
-            pickle.dump(log_reg, f)
-
         # Visualization of Confusion Matrix
         logger.info("Generating confusion matrix heatmap.")
-        cm = confusion_matrix(y_test_final, y_pred)
+        cm = confusion_matrix(y, y_pred)
         sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Predicted 0', 'Predicted 1'], yticklabels=['Actual 0', 'Actual 1'])
         plt.title('Confusion Matrix')
         plt.xlabel('Predicted')
