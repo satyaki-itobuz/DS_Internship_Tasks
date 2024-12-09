@@ -186,7 +186,7 @@ def model_evaluation(model, X_train,X_test, y_test, y_train):
     logger.info(f"f1 score: {f1_score(y_test,y_pred)}")
 
     final_result = {
-        "model":model,
+        "model":str(model),
         "accuracy_score": accuracy_score(y_test,y_pred),
         "precision_score": precision_score(y_test,y_pred),
         "Recall_score": recall_score(y_test,y_pred),
@@ -195,7 +195,7 @@ def model_evaluation(model, X_train,X_test, y_test, y_train):
 
     logger.info("Saving the final model results.")
     try:
-        with open('./results/initial_seletion_results.json', 'w') as fp: 
+        with open('./results/final_results.json', 'w') as fp: 
             # Make dictionary items JSON-serializable
             json.dump(final_result, fp, indent = 4)
         fp.close()
