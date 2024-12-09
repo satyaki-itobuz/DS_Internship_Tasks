@@ -71,7 +71,7 @@ def skew_kurtosis(df:pd.DataFrame,col:str) -> list:
         logging.error("An error occured")
         return repr(FileNotFoundError)
 
-def pie_chart(df:pd.DataFrame,col:str='reordered',save:bool=True):
+'''def pie_chart(df:pd.DataFrame,col:str='reordered',save:bool=True):
     """
     Pie chart of column in the dataset 
     """
@@ -86,7 +86,41 @@ def pie_chart(df:pd.DataFrame,col:str='reordered',save:bool=True):
         #plt.show()
     except Exception as FileNotFoundError:
         logging.error("An error occured")
-        return repr(FileNotFoundError)
+        return repr(FileNotFoundError)'''
+
+def pie_chart(df: pd.DataFrame, col: str = 'reordered', save: bool = True, min_percentage: float = 1.0):
+    """
+    Pie chart of a column in the dataset. Categories with less than min_percentage are grouped as 'Others'.
+    """
+    try:
+        # Calculate value counts for the column
+        df_counts = df[col].value_counts()
+        
+        # Calculate the percentage for each category
+        df_percentage = df_counts / df_counts.sum() * 100
+        
+        # Group small categories as "Others"
+        small_categories = df_percentage[df_percentage < min_percentage].index
+        df_counts.loc['Others'] = df_counts.loc[small_categories].sum()
+        df_counts = df_counts.drop(small_categories)
+        
+        # Create the pie chart
+        plt.figure(figsize=(12, 12))
+        plt.pie(df_counts, labels=df_counts.index, autopct="%1.1f%%", startangle=90)
+        plt.title(f'{col} Distribution (%)')
+        plt.axis('equal')  # Equal aspect ratio ensures that pie chart is drawn as a circle.
+        
+        # Save the plot if save flag is True
+        if save:
+            plt.savefig(f'{EDA_PLOTS_LOCATION}pie_{col}.png')
+        
+        #plt.show()  # Show the pie chart
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        return repr(e)
+
+
 
 def bar_plot(df:pd.DataFrame,col:str,save:bool=True):
     """
@@ -94,7 +128,7 @@ def bar_plot(df:pd.DataFrame,col:str,save:bool=True):
     """
     try:
         df_counts=df[col].value_counts()
-        df_plot=df_counts.plot(kind='bar')
+        df_counts.plot(kind='bar')
         plt.xlabel(f'{col}')
         plt.ylabel('count')
         plt.xticks(rotation=45)
